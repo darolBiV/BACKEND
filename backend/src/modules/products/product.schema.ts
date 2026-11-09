@@ -130,3 +130,15 @@ export const productUpdateSchema: FastifySchema = {
 export const productDeleteSchema: FastifySchema = {
   params: productParamsSchema,
 };
+
+export const productImageUploadSchema: FastifySchema = {
+  response: {
+    201: {
+      type: "object",
+      required: ["url"],
+      properties: {
+        url: { type: "string", format: "uri" },
+      },
+    },
+  },
+};

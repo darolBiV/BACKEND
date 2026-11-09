@@ -1,10 +1,14 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 
 import type { ProductService } from "./product.service.js";
+import type { ProductStorage } from "./product.storage.js";
 import type { ProductInput, ProductParams, ProductQuery } from "./product.types.js";
 
 export class ProductController {
-  public constructor(private readonly productService: ProductService) {}
+  public constructor(
+    private readonly productService: ProductService,
+    private readonly productStorage: ProductStorage,
+  ) {}
 
   public findMany = async (
     request: FastifyRequest<{ Querystring: ProductQuery }>,
@@ -36,5 +40,20 @@ export class ProductController {
   ): Promise<void> => {
     await this.productService.delete(request.params.id);
     await reply.status(204).send();
+  };
+
+  public uploadImage = async (
+    request: FastifyRequest,
+    reply: FastifyReply,
+  ): Promise<void> => {
+    const file = await request.file();
+
+    if (!file) {
+      await reply.status(400).send({ message: "Image file is required" });
+      return;
+    }
+
+    const url = await this.productStorage.upload(file);
+    await reply.status(201).send({ url });
   };
 }

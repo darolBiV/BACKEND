@@ -17,6 +17,9 @@ export const env = {
   CORS_ORIGIN: process.env.CORS_ORIGIN ?? "http://localhost:3000",
   REDIS_URL: process.env.REDIS_URL ?? "redis://localhost:6379",
   JWT_SECRET: process.env.JWT_SECRET ?? "",
+  SUPABASE_URL: process.env.SUPABASE_URL ?? "",
+  SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY ?? "",
+  SUPABASE_STORAGE_BUCKET: process.env.SUPABASE_STORAGE_BUCKET ?? "product-images",
 } as const;
 
 if (!env.JWT_SECRET) {
