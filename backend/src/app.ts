@@ -4,6 +4,7 @@ import Fastify, { type FastifyInstance } from "fastify";
 import { prisma } from "./config/database.js";
 import { env } from "./config/env.js";
 import { AppError } from "./errors/app-error.js";
+import { authRoutes } from "./modules/auth/auth.routes.js";
 import { productRoutes } from "./modules/products/product.routes.js";
 import { healthRoute } from "./routes/health.route.js";
 
@@ -40,6 +41,7 @@ export const buildApp = async (): Promise<FastifyInstance> => {
   });
 
   await app.register(healthRoute);
+  await app.register(authRoutes, { prefix: "/api/auth" });
   await app.register(productRoutes, { prefix: "/api/products" });
 
   return app;
