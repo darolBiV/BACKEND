@@ -1,5 +1,56 @@
 import type { FastifySchema } from "fastify";
 
+const productResponseSchema = {
+  type: "object",
+  required: [
+    "id",
+    "title",
+    "description",
+    "price",
+    "rating",
+    "images",
+    "stock_quantity",
+    "created_at",
+  ],
+  properties: {
+    id: { type: "integer" },
+    title: { type: "string" },
+    description: { type: "string" },
+    price: { type: "number" },
+    rating: { type: "number" },
+    images: { type: "array", items: { type: "string" } },
+    stock_quantity: { type: "integer" },
+    created_at: { type: "string" },
+  },
+} as const;
+
+const productBodySchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["title", "description", "price", "rating", "images", "stock_quantity"],
+  properties: {
+    title: { type: "string", minLength: 1 },
+    description: { type: "string", minLength: 1 },
+    price: { type: "number", minimum: 0 },
+    rating: { type: "number", minimum: 0, maximum: 5 },
+    images: {
+      type: "array",
+      minItems: 3,
+      items: { type: "string", format: "uri" },
+    },
+    stock_quantity: { type: "integer", minimum: 0 },
+  },
+} as const;
+
+const productParamsSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["id"],
+  properties: {
+    id: { type: "integer", minimum: 1 },
+  },
+} as const;
+
 export const productListSchema: FastifySchema = {
   querystring: {
     type: "object",
@@ -59,4 +110,23 @@ export const productListSchema: FastifySchema = {
       },
     },
   },
+};
+
+export const productCreateSchema: FastifySchema = {
+  body: productBodySchema,
+  response: {
+    201: productResponseSchema,
+  },
+};
+
+export const productUpdateSchema: FastifySchema = {
+  params: productParamsSchema,
+  body: productBodySchema,
+  response: {
+    200: productResponseSchema,
+  },
+};
+
+export const productDeleteSchema: FastifySchema = {
+  params: productParamsSchema,
 };
