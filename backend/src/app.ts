@@ -1,6 +1,6 @@
 import cors from "@fastify/cors";
 import Fastify, { type FastifyInstance } from "fastify";
-
+import { authRoutes } from "./modules/auth/auth.routes.js";
 import { prisma } from "./config/database.js";
 import { env } from "./config/env.js";
 import { redis } from "./config/redis.js";
@@ -43,6 +43,7 @@ export const buildApp = async (): Promise<FastifyInstance> => {
   });
 
   await app.register(healthRoute);
+  await app.register(authRoutes, { prefix: "/api/auth" });
   await app.register(productRoutes, { prefix: "/api/products" });
 
   return app;
