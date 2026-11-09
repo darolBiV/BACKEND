@@ -1,10 +1,12 @@
 import cors from "@fastify/cors";
+import jwt from "@fastify/jwt";
 import Fastify, { type FastifyInstance } from "fastify";
-import { authRoutes } from "./modules/auth/auth.routes.js";
+
 import { prisma } from "./config/database.js";
 import { env } from "./config/env.js";
 import { redis } from "./config/redis.js";
 import { AppError } from "./errors/app-error.js";
+import { authRoutes } from "./modules/auth/auth.routes.js";
 import { productRoutes } from "./modules/products/product.routes.js";
 import { healthRoute } from "./routes/health.route.js";
 
@@ -23,6 +25,10 @@ export const buildApp = async (): Promise<FastifyInstance> => {
 
   await app.register(cors, {
     origin: env.CORS_ORIGIN,
+  });
+
+  await app.register(jwt, {
+    secret: env.JWT_SECRET,
   });
 
   app.setNotFoundHandler(async (_request, reply) => {

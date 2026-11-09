@@ -16,4 +16,9 @@ export const env = {
   PORT: parsePort(process.env.PORT),
   CORS_ORIGIN: process.env.CORS_ORIGIN ?? "http://localhost:3000",
   REDIS_URL: process.env.REDIS_URL ?? "redis://localhost:6379",
+  JWT_SECRET: process.env.JWT_SECRET ?? "",
 } as const;
+
+if (!env.JWT_SECRET) {
+  throw new Error("JWT_SECRET is required");
+}

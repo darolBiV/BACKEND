@@ -2,7 +2,12 @@ import bcrypt from "bcrypt";
 
 import { AppError } from "../../errors/app-error.js";
 import type { AuthRepository } from "./auth.repository.js";
-import type { RegisterBody, RegisteredUser } from "./auth.types.js";
+import type {
+  AuthTokenPayload,
+  LoginBody,
+  RegisterBody,
+  RegisteredUser,
+} from "./auth.types.js";
 
 export class AuthService {
   public constructor(private readonly authRepository: AuthRepository) {}
@@ -23,6 +28,21 @@ export class AuthService {
       email: user.email,
       role: "customer",
       created_at: user.createdAt.toISOString(),
+    };
+  }
+
+  public async login(input: LoginBody): Promise<AuthTokenPayload> {
+    const email = input.email.trim().toLowerCase();
+    const user = await this.authRepository.findByEmail(email);
+
+    if (!user || !(await bcrypt.compare(input.password, user.passwordHash))) {
+      throw new AppError(401, "Invalid email or password");
+    }
+
+    return {
+      id: user.id,
+      email: user.email,
+      role: user.role === "ADMIN" ? "admin" : "customer",
     };
   }
 }

@@ -23,3 +23,24 @@ export const registerSchema: FastifySchema = {
     },
   },
 };
+
+export const loginSchema: FastifySchema = {
+  body: {
+    type: "object",
+    additionalProperties: false,
+    required: ["email", "password"],
+    properties: {
+      email: { type: "string", format: "email" },
+      password: { type: "string", minLength: 1 },
+    },
+  },
+  response: {
+    200: {
+      type: "object",
+      required: ["token"],
+      properties: {
+        token: { type: "string" },
+      },
+    },
+  },
+};
