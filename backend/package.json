@@ -22,6 +22,7 @@
     "redis": "^6.3.1"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/node": "^22.20.4",
     "prisma": "^6.19.0",
     "tsx": "^4.20.6",
