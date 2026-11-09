@@ -13,3 +13,14 @@ export const authenticate = async (
     throw new AppError(401, "Unauthorized");
   }
 };
+
+export const authorizeAdmin = async (
+  request: FastifyRequest,
+  _reply: FastifyReply,
+): Promise<void> => {
+  const user = request.user as AuthTokenPayload;
+
+  if (user.role !== "admin") {
+    throw new AppError(403, "Forbidden");
+  }
+};
