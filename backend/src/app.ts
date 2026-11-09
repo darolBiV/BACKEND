@@ -1,5 +1,6 @@
 import cors from "@fastify/cors";
 import jwt from "@fastify/jwt";
+import multipart from "@fastify/multipart";
 import Fastify, { type FastifyInstance } from "fastify";
 
 import { prisma } from "./config/database.js";
@@ -29,6 +30,13 @@ export const buildApp = async (): Promise<FastifyInstance> => {
 
   await app.register(jwt, {
     secret: env.JWT_SECRET,
+  });
+
+  await app.register(multipart, {
+    limits: {
+      files: 1,
+      fileSize: 5 * 1024 * 1024,
+    },
   });
 
   app.setNotFoundHandler(async (_request, reply) => {
