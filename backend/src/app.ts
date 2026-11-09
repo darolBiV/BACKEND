@@ -3,6 +3,7 @@ import Fastify, { type FastifyInstance } from "fastify";
 
 import { prisma } from "./config/database.js";
 import { env } from "./config/env.js";
+import { redis } from "./config/redis.js";
 import { AppError } from "./errors/app-error.js";
 import { productRoutes } from "./modules/products/product.routes.js";
 import { healthRoute } from "./routes/health.route.js";
@@ -13,8 +14,10 @@ export const buildApp = async (): Promise<FastifyInstance> => {
   });
 
   await prisma.$connect();
+  await redis.connect();
 
   app.addHook("onClose", async () => {
+    await redis.quit();
     await prisma.$disconnect();
   });
 
