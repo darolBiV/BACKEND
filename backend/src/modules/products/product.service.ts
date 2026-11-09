@@ -1,9 +1,13 @@
 import { AppError } from "../../errors/app-error.js";
+import type { ProductCache } from "./product.cache.js";
 import type { ProductRepository } from "./product.repository.js";
 import type { ProductListResult, ProductQuery } from "./product.types.js";
 
 export class ProductService {
-  public constructor(private readonly productRepository: ProductRepository) {}
+  public constructor(
+    private readonly productRepository: ProductRepository,
+    private readonly productCache: ProductCache,
+  ) {}
 
   public async findMany(query: ProductQuery): Promise<ProductListResult> {
     if (
@@ -14,9 +18,15 @@ export class ProductService {
       throw new AppError(400, "min_price cannot be greater than max_price");
     }
 
+    const cached = await this.productCache.get(query);
+
+    if (cached !== null) {
+      return cached;
+    }
+
     const { items, total } = await this.productRepository.findMany(query);
 
-    return {
+    const result: ProductListResult = {
       items: items.map((product) => ({
         id: product.id,
         title: product.title,
@@ -34,5 +44,9 @@ export class ProductService {
         limit: query.limit,
       },
     };
+
+    await this.productCache.set(query, result);
+
+    return result;
   }
 }

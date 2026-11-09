@@ -15,4 +15,5 @@ export const env = {
   HOST: process.env.HOST ?? "0.0.0.0",
   PORT: parsePort(process.env.PORT),
   CORS_ORIGIN: process.env.CORS_ORIGIN ?? "http://localhost:3000",
+  REDIS_URL: process.env.REDIS_URL ?? "redis://localhost:6379",
 } as const;
