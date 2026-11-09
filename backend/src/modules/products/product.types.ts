@@ -32,3 +32,16 @@ export interface ProductListResult {
     limit: number;
   };
 }
+
+export interface ProductParams {
+  id: number;
+}
+
+export interface ProductInput {
+  title: string;
+  description: string;
+  price: number;
+  rating: number;
+  images: string[];
+  stock_quantity: number;
+}

@@ -1,7 +1,7 @@
 import type { Prisma } from "@prisma/client";
 
 import { prisma } from "../../config/database.js";
-import type { ProductQuery } from "./product.types.js";
+import type { ProductInput, ProductQuery } from "./product.types.js";
 
 export class ProductRepository {
   public async findMany(query: ProductQuery) {
@@ -36,5 +36,40 @@ export class ProductRepository {
     ]);
 
     return { items, total };
+  }
+
+  public async findById(id: number) {
+    return prisma.product.findUnique({ where: { id } });
+  }
+
+  public async create(input: ProductInput) {
+    return prisma.product.create({
+      data: {
+        title: input.title,
+        description: input.description,
+        price: input.price,
+        rating: input.rating,
+        images: input.images,
+        stockQuantity: input.stock_quantity,
+      },
+    });
+  }
+
+  public async update(id: number, input: ProductInput) {
+    return prisma.product.update({
+      where: { id },
+      data: {
+        title: input.title,
+        description: input.description,
+        price: input.price,
+        rating: input.rating,
+        images: input.images,
+        stockQuantity: input.stock_quantity,
+      },
+    });
+  }
+
+  public async delete(id: number): Promise<void> {
+    await prisma.product.delete({ where: { id } });
   }
 }
