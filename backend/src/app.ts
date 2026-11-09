@@ -7,6 +7,7 @@ import { env } from "./config/env.js";
 import { redis } from "./config/redis.js";
 import { AppError } from "./errors/app-error.js";
 import { authRoutes } from "./modules/auth/auth.routes.js";
+import { cartRoutes } from "./modules/cart/cart.routes.js";
 import { productRoutes } from "./modules/products/product.routes.js";
 import { healthRoute } from "./routes/health.route.js";
 
@@ -50,6 +51,7 @@ export const buildApp = async (): Promise<FastifyInstance> => {
 
   await app.register(healthRoute);
   await app.register(authRoutes, { prefix: "/api/auth" });
+  await app.register(cartRoutes, { prefix: "/api/cart" });
   await app.register(productRoutes, { prefix: "/api/products" });
 
   return app;
