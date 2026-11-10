@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CUSTOMER @map("customer")
+  ADMIN    @map("admin")
+
+  @@map("user_role")
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  role         Role     @default(CUSTOMER)
+  createdAt    DateTime @default(now()) @map("created_at")
+  cart         Cart?
+
+  @@map("users")
+}
+
+model Product {
+  id            Int        @id @default(autoincrement())
+  title         String
+  description   String     @db.Text
+  price         Decimal    @db.Decimal(10, 2)
+  rating        Float
+  images        String[]
+  stockQuantity Int        @map("stock_quantity")
+  createdAt     DateTime   @default(now()) @map("created_at")
+  cartItems     CartItem[]
+
+  @@map("products")
+}
+
+model Cart {
+  id     Int        @id @default(autoincrement())
+  userId Int        @unique @map("user_id")
+  user   User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items  CartItem[]
+
+  @@map("carts")
+}
+
+model CartItem {
+  id        Int     @id @default(autoincrement())
+  cartId    Int     @map("cart_id")
+  productId Int     @map("product_id")
+  quantity  Int
+  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@unique([cartId, productId])
+  @@map("cart_items")
+}
+
+model PromoCode {
+  id                 Int     @id @default(autoincrement())
+  code               String  @unique
+  discountPercentage Int     @map("discount_percentage")
+  isActive           Boolean @default(true) @map("is_active")
+
+  @@map("promo_codes")
+}
