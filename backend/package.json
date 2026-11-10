@@ -22,12 +22,12 @@
     "bcrypt": "^6.0.0",
     "dotenv": "^18.0.8",
     "fastify": "^5.12.7",
+    "prisma": "^6.19.0",
     "redis": "^6.3.1"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
     "@types/node": "^22.20.4",
-    "prisma": "^6.19.0",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3"
   }
