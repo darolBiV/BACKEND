@@ -74,4 +74,13 @@ export class CartRepository {
   public async deleteItem(itemId: number): Promise<void> {
     await prisma.cartItem.delete({ where: { id: itemId } });
   }
+
+  public async findActivePromoCode(code: string) {
+    return prisma.promoCode.findFirst({
+      where: {
+        code,
+        isActive: true,
+      },
+    });
+  }
 }
