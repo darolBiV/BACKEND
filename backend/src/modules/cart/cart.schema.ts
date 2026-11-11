@@ -43,12 +43,18 @@ const cartItemParamsSchema = {
 } as const;
 
 export const getCartSchema: FastifySchema = {
+  tags: ["Cart"],
+  summary: "Get the current user's cart",
+  security: [{ bearerAuth: [] }],
   response: {
     200: cartResponseSchema,
   },
 };
 
 export const addCartItemSchema: FastifySchema = {
+  tags: ["Cart"],
+  summary: "Add a product to the cart",
+  security: [{ bearerAuth: [] }],
   body: {
     type: "object",
     additionalProperties: false,
@@ -64,6 +70,9 @@ export const addCartItemSchema: FastifySchema = {
 };
 
 export const updateCartItemSchema: FastifySchema = {
+  tags: ["Cart"],
+  summary: "Change a cart item quantity",
+  security: [{ bearerAuth: [] }],
   params: cartItemParamsSchema,
   body: {
     type: "object",
@@ -79,6 +88,9 @@ export const updateCartItemSchema: FastifySchema = {
 };
 
 export const deleteCartItemSchema: FastifySchema = {
+  tags: ["Cart"],
+  summary: "Remove an item from the cart",
+  security: [{ bearerAuth: [] }],
   params: cartItemParamsSchema,
   response: {
     200: cartResponseSchema,
@@ -86,6 +98,9 @@ export const deleteCartItemSchema: FastifySchema = {
 };
 
 export const applyPromoSchema: FastifySchema = {
+  tags: ["Cart"],
+  summary: "Apply a promo code to the cart",
+  security: [{ bearerAuth: [] }],
   body: {
     type: "object",
     additionalProperties: false,

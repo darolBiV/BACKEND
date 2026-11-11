@@ -1,6 +1,8 @@
 import cors from "@fastify/cors";
 import jwt from "@fastify/jwt";
 import multipart from "@fastify/multipart";
+import swagger from "@fastify/swagger";
+import swaggerUi from "@fastify/swagger-ui";
 import Fastify, { type FastifyInstance } from "fastify";
 
 import { prisma } from "./config/database.js";
@@ -38,6 +40,35 @@ export const buildApp = async (): Promise<FastifyInstance> => {
       files: 1,
       fileSize: 5 * 1024 * 1024,
     },
+  });
+
+  await app.register(swagger, {
+    openapi: {
+      info: {
+        title: "PawsStore API",
+        description: "API for the pet products catalog, authentication and cart",
+        version: "1.0.0",
+      },
+      tags: [
+        { name: "Health", description: "Application status" },
+        { name: "Auth", description: "Registration and authentication" },
+        { name: "Products", description: "Product catalog and administration" },
+        { name: "Cart", description: "Customer cart and promo codes" },
+      ],
+      components: {
+        securitySchemes: {
+          bearerAuth: {
+            type: "http",
+            scheme: "bearer",
+            bearerFormat: "JWT",
+          },
+        },
+      },
+    },
+  });
+
+  await app.register(swaggerUi, {
+    routePrefix: "/docs",
   });
 
   app.setNotFoundHandler(async (_request, reply) => {

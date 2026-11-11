@@ -52,6 +52,8 @@ const productParamsSchema = {
 } as const;
 
 export const productListSchema: FastifySchema = {
+  tags: ["Products"],
+  summary: "Get the product catalog",
   querystring: {
     type: "object",
     additionalProperties: false,
@@ -113,6 +115,9 @@ export const productListSchema: FastifySchema = {
 };
 
 export const productCreateSchema: FastifySchema = {
+  tags: ["Products"],
+  summary: "Create a product",
+  security: [{ bearerAuth: [] }],
   body: productBodySchema,
   response: {
     201: productResponseSchema,
@@ -120,6 +125,9 @@ export const productCreateSchema: FastifySchema = {
 };
 
 export const productUpdateSchema: FastifySchema = {
+  tags: ["Products"],
+  summary: "Update a product",
+  security: [{ bearerAuth: [] }],
   params: productParamsSchema,
   body: productBodySchema,
   response: {
@@ -128,10 +136,18 @@ export const productUpdateSchema: FastifySchema = {
 };
 
 export const productDeleteSchema: FastifySchema = {
+  tags: ["Products"],
+  summary: "Delete a product",
+  security: [{ bearerAuth: [] }],
   params: productParamsSchema,
 };
 
 export const productImageUploadSchema: FastifySchema = {
+  tags: ["Products"],
+  summary: "Upload a product image",
+  description: "Uploads one image as multipart/form-data. The file field name is `file`.",
+  consumes: ["multipart/form-data"],
+  security: [{ bearerAuth: [] }],
   response: {
     201: {
       type: "object",
