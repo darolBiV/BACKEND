@@ -3,6 +3,14 @@ export interface AddCartItemBody {
   quantity: number;
 }
 
+export interface UpdateCartItemBody {
+  quantity: number;
+}
+
+export interface CartItemParams {
+  id: number;
+}
+
 export interface CartProduct {
   id: number;
   title: string;

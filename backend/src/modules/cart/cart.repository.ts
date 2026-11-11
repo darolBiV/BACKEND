@@ -51,4 +51,27 @@ export class CartRepository {
       update: { quantity },
     });
   }
+
+  public async findItemByIdForUser(itemId: number, userId: number) {
+    return prisma.cartItem.findFirst({
+      where: {
+        id: itemId,
+        cart: { userId },
+      },
+      include: {
+        product: true,
+      },
+    });
+  }
+
+  public async updateItemQuantity(itemId: number, quantity: number): Promise<void> {
+    await prisma.cartItem.update({
+      where: { id: itemId },
+      data: { quantity },
+    });
+  }
+
+  public async deleteItem(itemId: number): Promise<void> {
+    await prisma.cartItem.delete({ where: { id: itemId } });
+  }
 }

@@ -1,6 +1,10 @@
 import { AppError } from "../../errors/app-error.js";
 import type { CartRepository } from "./cart.repository.js";
-import type { AddCartItemBody, CartResult } from "./cart.types.js";
+import type {
+  AddCartItemBody,
+  CartResult,
+  UpdateCartItemBody,
+} from "./cart.types.js";
 
 export class CartService {
   public constructor(private readonly cartRepository: CartRepository) {}
@@ -49,6 +53,38 @@ export class CartService {
     }
 
     await this.cartRepository.saveItem(cart.id, product.id, quantity);
+
+    return this.getCart(userId);
+  }
+
+  public async updateItem(
+    userId: number,
+    itemId: number,
+    input: UpdateCartItemBody,
+  ): Promise<CartResult> {
+    const item = await this.cartRepository.findItemByIdForUser(itemId, userId);
+
+    if (!item) {
+      throw new AppError(404, "Cart item not found");
+    }
+
+    if (input.quantity > item.product.stockQuantity) {
+      throw new AppError(400, "Requested quantity exceeds available stock");
+    }
+
+    await this.cartRepository.updateItemQuantity(item.id, input.quantity);
+
+    return this.getCart(userId);
+  }
+
+  public async deleteItem(userId: number, itemId: number): Promise<CartResult> {
+    const item = await this.cartRepository.findItemByIdForUser(itemId, userId);
+
+    if (!item) {
+      throw new AppError(404, "Cart item not found");
+    }
+
+    await this.cartRepository.deleteItem(item.id);
 
     return this.getCart(userId);
   }

@@ -33,6 +33,15 @@ const cartResponseSchema = {
   },
 } as const;
 
+const cartItemParamsSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["id"],
+  properties: {
+    id: { type: "integer", minimum: 1 },
+  },
+} as const;
+
 export const getCartSchema: FastifySchema = {
   response: {
     200: cartResponseSchema,
@@ -49,6 +58,28 @@ export const addCartItemSchema: FastifySchema = {
       quantity: { type: "integer", minimum: 1, default: 1 },
     },
   },
+  response: {
+    200: cartResponseSchema,
+  },
+};
+
+export const updateCartItemSchema: FastifySchema = {
+  params: cartItemParamsSchema,
+  body: {
+    type: "object",
+    additionalProperties: false,
+    required: ["quantity"],
+    properties: {
+      quantity: { type: "integer", minimum: 1 },
+    },
+  },
+  response: {
+    200: cartResponseSchema,
+  },
+};
+
+export const deleteCartItemSchema: FastifySchema = {
+  params: cartItemParamsSchema,
   response: {
     200: cartResponseSchema,
   },
