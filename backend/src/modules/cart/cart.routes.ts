@@ -5,6 +5,7 @@ import { CartController } from "./cart.controller.js";
 import { CartRepository } from "./cart.repository.js";
 import {
   addCartItemSchema,
+  applyPromoSchema,
   deleteCartItemSchema,
   getCartSchema,
   updateCartItemSchema,
@@ -12,6 +13,7 @@ import {
 import { CartService } from "./cart.service.js";
 import type {
   AddCartItemBody,
+  ApplyPromoBody,
   CartItemParams,
   UpdateCartItemBody,
 } from "./cart.types.js";
@@ -43,5 +45,11 @@ export const cartRoutes = async (app: FastifyInstance): Promise<void> => {
     "/items/:id",
     { schema: deleteCartItemSchema, preHandler: authenticate },
     cartController.deleteItem,
+  );
+
+  app.post<{ Body: ApplyPromoBody }>(
+    "/apply-promo",
+    { schema: applyPromoSchema, preHandler: authenticate },
+    cartController.applyPromo,
   );
 };

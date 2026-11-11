@@ -11,6 +11,10 @@ export interface CartItemParams {
   id: number;
 }
 
+export interface ApplyPromoBody {
+  code: string;
+}
+
 export interface CartProduct {
   id: number;
   title: string;
@@ -30,5 +34,13 @@ export interface CartItemResult {
 export interface CartResult {
   id: number;
   items: CartItemResult[];
+  total_price: number;
+}
+
+export interface PromoResult {
+  code: string;
+  discount_percentage: number;
+  subtotal: number;
+  discount_amount: number;
   total_price: number;
 }

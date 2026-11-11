@@ -84,3 +84,33 @@ export const deleteCartItemSchema: FastifySchema = {
     200: cartResponseSchema,
   },
 };
+
+export const applyPromoSchema: FastifySchema = {
+  body: {
+    type: "object",
+    additionalProperties: false,
+    required: ["code"],
+    properties: {
+      code: { type: "string", minLength: 1 },
+    },
+  },
+  response: {
+    200: {
+      type: "object",
+      required: [
+        "code",
+        "discount_percentage",
+        "subtotal",
+        "discount_amount",
+        "total_price",
+      ],
+      properties: {
+        code: { type: "string" },
+        discount_percentage: { type: "integer" },
+        subtotal: { type: "number" },
+        discount_amount: { type: "number" },
+        total_price: { type: "number" },
+      },
+    },
+  },
+};

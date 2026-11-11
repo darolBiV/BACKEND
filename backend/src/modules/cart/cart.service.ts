@@ -2,7 +2,9 @@ import { AppError } from "../../errors/app-error.js";
 import type { CartRepository } from "./cart.repository.js";
 import type {
   AddCartItemBody,
+  ApplyPromoBody,
   CartResult,
+  PromoResult,
   UpdateCartItemBody,
 } from "./cart.types.js";
 
@@ -89,8 +91,35 @@ export class CartService {
     return this.getCart(userId);
   }
 
+  public async applyPromo(userId: number, input: ApplyPromoBody): Promise<PromoResult> {
+    const code = input.code.trim().toUpperCase();
+    const promoCode = await this.cartRepository.findActivePromoCode(code);
+
+    if (!promoCode) {
+      throw new AppError(400, "Invalid or inactive promo code");
+    }
+
+    const cart = await this.getCart(userId);
+    const subtotal = this.roundMoney(cart.total_price);
+    const discountAmount = this.roundMoney(
+      subtotal * (promoCode.discountPercentage / 100),
+    );
+
+    return {
+      code: promoCode.code,
+      discount_percentage: promoCode.discountPercentage,
+      subtotal,
+      discount_amount: discountAmount,
+      total_price: this.roundMoney(subtotal - discountAmount),
+    };
+  }
+
   private async getOrCreateCart(userId: number) {
     const cart = await this.cartRepository.findByUserId(userId);
     return cart ?? this.cartRepository.createForUser(userId);
+  }
+
+  private roundMoney(value: number): number {
+    return Math.round((value + Number.EPSILON) * 100) / 100;
   }
 }
