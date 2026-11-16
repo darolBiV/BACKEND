@@ -48,6 +48,16 @@ export class ProductService {
     return result;
   }
 
+  public async findById(id: number): Promise<ProductListItem> {
+    const product = await this.productRepository.findById(id);
+
+    if (!product) {
+      throw new AppError(404, "Product not found");
+    }
+
+    return this.serialize(product);
+  }
+
   public async create(input: ProductInput): Promise<ProductListItem> {
     const product = await this.productRepository.create(input);
     await this.productCache.invalidate();

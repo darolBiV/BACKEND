@@ -18,6 +18,14 @@ export class ProductController {
     await reply.status(200).send(result);
   };
 
+  public findById = async (
+    request: FastifyRequest<{ Params: ProductParams }>,
+    reply: FastifyReply,
+  ): Promise<void> => {
+    const product = await this.productService.findById(request.params.id);
+    await reply.status(200).send(product);
+  };
+
   public create = async (
     request: FastifyRequest<{ Body: ProductInput }>,
     reply: FastifyReply,
