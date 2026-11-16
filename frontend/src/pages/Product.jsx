@@ -1,11 +1,10 @@
 import { useParams, Link } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { CartContext } from "../context/CartContext";
+import { API_URL } from "../config/api";
 import Slider from "../components/Slider";
 import ProductCard from "../components/ProductCard";
 import "./Product.css";
-
-const API_URL = process.env.REACT_APP_API_URL ?? "http://localhost:5000";
 
 function Product() {
   const { id } = useParams();

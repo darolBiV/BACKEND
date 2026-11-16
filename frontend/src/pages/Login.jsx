@@ -1,9 +1,8 @@
 import { useContext, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import { API_URL } from "../config/api";
 import "./Auth.css";
-
-const API_URL = process.env.REACT_APP_API_URL ?? "http://localhost:5000";
 
 function Login() {
   const { isAuthenticated, login } = useContext(AuthContext);

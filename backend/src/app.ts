@@ -29,6 +29,7 @@ export const buildApp = async (): Promise<FastifyInstance> => {
 
   await app.register(cors, {
     origin: env.CORS_ORIGIN,
+    methods: ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   });
 
   await app.register(jwt, {

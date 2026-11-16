@@ -7,7 +7,7 @@ import "./Header.css";
 
 function Header() {
   const { totalQuantity } = useContext(CartContext);
-  const { isAuthenticated, logout } = useContext(AuthContext);
+  const { isAuthenticated, isAdmin, logout } = useContext(AuthContext);
 
   return (
     <header className="header">
@@ -21,6 +21,7 @@ function Header() {
 
         <div className="menu">
           <Link to="/">Shop</Link>
+          {isAdmin && <Link to="/admin">Admin</Link>}
           <Link to="/">Categories</Link>
           <Link to="/">Deals</Link>
           <Link to="/">About</Link>

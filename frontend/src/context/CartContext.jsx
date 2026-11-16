@@ -1,7 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { AuthContext } from "./AuthContext";
-
-const API_URL = process.env.REACT_APP_API_URL ?? "http://localhost:5000";
+import { API_URL } from "../config/api";
 
 export const CartContext = createContext();
 
