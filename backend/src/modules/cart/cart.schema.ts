@@ -33,13 +33,28 @@ const cartResponseSchema = {
   },
 } as const;
 
+const cartItemParamsSchema = {
+  type: "object",
+  additionalProperties: false,
+  required: ["id"],
+  properties: {
+    id: { type: "integer", minimum: 1 },
+  },
+} as const;
+
 export const getCartSchema: FastifySchema = {
+  tags: ["Cart"],
+  summary: "Get the current user's cart",
+  security: [{ bearerAuth: [] }],
   response: {
     200: cartResponseSchema,
   },
 };
 
 export const addCartItemSchema: FastifySchema = {
+  tags: ["Cart"],
+  summary: "Add a product to the cart",
+  security: [{ bearerAuth: [] }],
   body: {
     type: "object",
     additionalProperties: false,
@@ -51,5 +66,66 @@ export const addCartItemSchema: FastifySchema = {
   },
   response: {
     200: cartResponseSchema,
+  },
+};
+
+export const updateCartItemSchema: FastifySchema = {
+  tags: ["Cart"],
+  summary: "Change a cart item quantity",
+  security: [{ bearerAuth: [] }],
+  params: cartItemParamsSchema,
+  body: {
+    type: "object",
+    additionalProperties: false,
+    required: ["quantity"],
+    properties: {
+      quantity: { type: "integer", minimum: 1 },
+    },
+  },
+  response: {
+    200: cartResponseSchema,
+  },
+};
+
+export const deleteCartItemSchema: FastifySchema = {
+  tags: ["Cart"],
+  summary: "Remove an item from the cart",
+  security: [{ bearerAuth: [] }],
+  params: cartItemParamsSchema,
+  response: {
+    200: cartResponseSchema,
+  },
+};
+
+export const applyPromoSchema: FastifySchema = {
+  tags: ["Cart"],
+  summary: "Apply a promo code to the cart",
+  security: [{ bearerAuth: [] }],
+  body: {
+    type: "object",
+    additionalProperties: false,
+    required: ["code"],
+    properties: {
+      code: { type: "string", minLength: 1 },
+    },
+  },
+  response: {
+    200: {
+      type: "object",
+      required: [
+        "code",
+        "discount_percentage",
+        "subtotal",
+        "discount_amount",
+        "total_price",
+      ],
+      properties: {
+        code: { type: "string" },
+        discount_percentage: { type: "integer" },
+        subtotal: { type: "number" },
+        discount_amount: { type: "number" },
+        total_price: { type: "number" },
+      },
+    },
   },
 };

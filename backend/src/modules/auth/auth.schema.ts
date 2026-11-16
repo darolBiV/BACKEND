@@ -1,6 +1,8 @@
 import type { FastifySchema } from "fastify";
 
 export const registerSchema: FastifySchema = {
+  tags: ["Auth"],
+  summary: "Register a customer",
   body: {
     type: "object",
     additionalProperties: false,
@@ -25,6 +27,8 @@ export const registerSchema: FastifySchema = {
 };
 
 export const loginSchema: FastifySchema = {
+  tags: ["Auth"],
+  summary: "Log in and receive a JWT",
   body: {
     type: "object",
     additionalProperties: false,

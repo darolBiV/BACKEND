@@ -89,6 +89,19 @@
   min-width: 32px;
 }
 
+.auth-header-button {
+  padding: 9px 14px;
+  border: 1px solid #f57c00;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #f57c00;
+  font-weight: 700;
+}
+
+.auth-header-button:hover {
+  background: #fff7ed;
+}
+
 .cart-badge {
   position: absolute;
   top: -8px;

@@ -1,11 +1,13 @@
 import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { CartContext } from "../context/CartContext";
-import { FaShoppingCart, FaSearch } from "react-icons/fa";
+import { AuthContext } from "../context/AuthContext";
+import { FaShoppingCart, FaSearch, FaUser } from "react-icons/fa";
 import "./Header.css";
 
 function Header() {
   const { totalQuantity } = useContext(CartContext);
+  const { isAuthenticated, isAdmin, logout } = useContext(AuthContext);
 
   return (
     <header className="header">
@@ -19,6 +21,7 @@ function Header() {
 
         <div className="menu">
           <Link to="/">Shop</Link>
+          {isAdmin && <Link to="/admin">Admin</Link>}
           <Link to="/">Categories</Link>
           <Link to="/">Deals</Link>
           <Link to="/">About</Link>
@@ -28,6 +31,16 @@ function Header() {
           <button type="button" className="icon-button" aria-label="Search">
             <FaSearch />
           </button>
+
+          {isAuthenticated ? (
+            <button type="button" className="auth-header-button" onClick={logout}>
+              Sign out
+            </button>
+          ) : (
+            <Link to="/login" className="icon-button" aria-label="Sign in">
+              <FaUser />
+            </Link>
+          )}
 
           <Link to="/cart" className="icon-button cart-icon" aria-label="Cart">
             <FaShoppingCart />

@@ -1,7 +1,7 @@
 import { useParams, Link } from "react-router-dom";
-import { useContext, useState } from "react";
-import { products } from "../data/products";
+import { useContext, useEffect, useState } from "react";
 import { CartContext } from "../context/CartContext";
+import { API_URL } from "../config/api";
 import Slider from "../components/Slider";
 import ProductCard from "../components/ProductCard";
 import "./Product.css";
@@ -9,18 +9,72 @@ import "./Product.css";
 function Product() {
   const { id } = useParams();
   const { addToCart, cartItems } = useContext(CartContext);
+  const [product, setProduct] = useState(null);
+  const [relatedProducts, setRelatedProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [isSpecsOpen, setIsSpecsOpen] = useState(true);
 
-  const product = products.find((item) => item.id === Number(id));
+  useEffect(() => {
+    const controller = new AbortController();
 
-  if (!product) {
-    return <h1 className="product-not-found">Product not found</h1>;
+    const loadProduct = async () => {
+      setIsLoading(true);
+      setError("");
+      setQuantity(1);
+
+      try {
+        const [productResponse, catalogResponse] = await Promise.all([
+          fetch(`${API_URL}/api/products/${id}`, { signal: controller.signal }),
+          fetch(`${API_URL}/api/products?page=1&limit=4`, {
+            signal: controller.signal,
+          }),
+        ]);
+
+        if (productResponse.status === 404) {
+          setProduct(null);
+          setRelatedProducts([]);
+          setError("Product not found");
+          return;
+        }
+
+        if (!productResponse.ok || !catalogResponse.ok) {
+          throw new Error("Failed to load product");
+        }
+
+        const productData = await productResponse.json();
+        const catalogData = await catalogResponse.json();
+
+        setProduct(productData);
+        setRelatedProducts(
+          catalogData.items
+            .filter((item) => item.id !== productData.id)
+            .slice(0, 3)
+            .map((item) => ({ ...item, image: item.images[0] })),
+        );
+      } catch (requestError) {
+        if (requestError.name !== "AbortError") {
+          setProduct(null);
+          setRelatedProducts([]);
+          setError("Unable to load product. Please try again.");
+        }
+      } finally {
+        if (!controller.signal.aborted) setIsLoading(false);
+      }
+    };
+
+    loadProduct();
+    return () => controller.abort();
+  }, [id]);
+
+  if (isLoading) {
+    return <h1 className="product-not-found">Loading product...</h1>;
   }
 
-  const relatedProducts = products
-    .filter((item) => item.id !== product.id)
-    .slice(0, 3);
+  if (!product) {
+    return <h1 className="product-not-found">{error || "Product not found"}</h1>;
+  }
 
   const fullStars = Math.floor(product.rating);
   const emptyStars = 5 - fullStars;

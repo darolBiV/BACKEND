@@ -1,6 +1,7 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
+import { AuthContext } from "../context/AuthContext";
 import {FaTrash,FaCreditCard,FaTag,FaClock,FaMapMarkerAlt,FaShoppingBag,FaCheck,FaTimes,} from "react-icons/fa";
 import "./Cart.css";
 
@@ -13,48 +14,76 @@ function Cart() {
     totalPrice,
     totalItems,
     totalQuantity,
+    applyPromo,
+    isLoading,
   } = useContext(CartContext);
+  const { isAuthenticated } = useContext(AuthContext);
 
   const [promoCode, setPromoCode] = useState("");
-  const [discount, setDiscount] = useState(0);
+  const [promoResult, setPromoResult] = useState(null);
   const [error, setError] = useState("");
-  const [appliedPromo, setAppliedPromo] = useState("");
+  const [isPromoLoading, setIsPromoLoading] = useState(false);
 
-  const handleApplyPromo = () => {
+  const handleApplyPromo = async () => {
     if (!promoCode.trim()) {
       setError("Enter promo code");
       return;
     }
 
-    if (appliedPromo) {
-      return;
-    }
-
-    if (promoCode.trim().toUpperCase() === "SAVE10") {
-      setDiscount(0.1);
-      setAppliedPromo("SAVE10");
+    setIsPromoLoading(true);
+    try {
+      const result = await applyPromo(promoCode);
+      setPromoResult(result);
       setError("");
       setPromoCode("");
-    } else {
-      setDiscount(0);
-      setAppliedPromo("");
-      setError("Invalid promo code");
+    } catch (promoError) {
+      setPromoResult(null);
+      setError(promoError.message);
+    } finally {
+      setIsPromoLoading(false);
     }
   };
 
   const handleRemovePromo = () => {
-    setDiscount(0);
-    setAppliedPromo("");
+    setPromoResult(null);
     setPromoCode("");
     setError("");
   };
 
   const subtotal = totalPrice;
-  const tax = subtotal * 0.08;
-  const totalBeforeDiscount = subtotal + tax;
-  const discountAmount = totalBeforeDiscount * discount;
-  const finalTotal = totalBeforeDiscount - discountAmount;
+  const finalTotal = promoResult?.total_price ?? subtotal;
   const freeShippingQualified = subtotal >= 50;
+
+  useEffect(() => {
+    setPromoResult(null);
+  }, [subtotal]);
+
+  if (!isAuthenticated) {
+    return (
+      <div className="empty-cart-page">
+        <div className="empty-cart-content">
+          <div className="empty-cart-icon">
+            <FaShoppingBag />
+          </div>
+          <h1>Sign in to view your cart</h1>
+          <p>Your cart is connected to your account.</p>
+          <Link to="/login" className="start-shopping-btn">
+            Sign In →
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="empty-cart-page">
+        <div className="empty-cart-content">
+          <h1>Loading cart...</h1>
+        </div>
+      </div>
+    );
+  }
 
   if (cartItems.length === 0) {
     return (
@@ -181,7 +210,7 @@ function Cart() {
                 <FaTag /> Promo Code
               </label>
 
-              {!appliedPromo ? (
+              {!promoResult ? (
                 <div className="promo-row">
                   <input
                     type="text"
@@ -195,8 +224,9 @@ function Cart() {
                     type="button"
                     onClick={handleApplyPromo}
                     className="apply-btn"
+                    disabled={isPromoLoading}
                   >
-                    Apply
+                    {isPromoLoading ? "Applying..." : "Apply"}
                   </button>
                 </div>
               ) : (
@@ -207,9 +237,9 @@ function Cart() {
                     </div>
 
                     <div className="promo-success-text">
-                      <div className="promo-success-code">{appliedPromo}</div>
+                      <div className="promo-success-code">{promoResult.code}</div>
                       <div className="promo-success-desc">
-                        10% discount applied
+                        {promoResult.discount_percentage}% discount applied
                       </div>
                     </div>
                   </div>
@@ -233,15 +263,10 @@ function Cart() {
               <span>${subtotal.toFixed(2)}</span>
             </div>
 
-            <div className="summary-line">
-              <span>Tax (8%)</span>
-              <span>${tax.toFixed(2)}</span>
-            </div>
-
-            {discount > 0 && (
+            {promoResult && (
               <div className="summary-line discount-line">
-                <span>Discount (10%)</span>
-                <span>-${discountAmount.toFixed(2)}</span>
+                <span>Discount ({promoResult.discount_percentage}%)</span>
+                <span>-${promoResult.discount_amount.toFixed(2)}</span>
               </div>
             )}
 
