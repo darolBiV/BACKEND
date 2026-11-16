@@ -114,6 +114,15 @@ export const productListSchema: FastifySchema = {
   },
 };
 
+export const productGetSchema: FastifySchema = {
+  tags: ["Products"],
+  summary: "Get a product by ID",
+  params: productParamsSchema,
+  response: {
+    200: productResponseSchema,
+  },
+};
+
 export const productCreateSchema: FastifySchema = {
   tags: ["Products"],
   summary: "Create a product",

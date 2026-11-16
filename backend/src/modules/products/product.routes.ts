@@ -8,6 +8,7 @@ import { ProductRepository } from "./product.repository.js";
 import {
   productCreateSchema,
   productDeleteSchema,
+  productGetSchema,
   productImageUploadSchema,
   productListSchema,
   productUpdateSchema,
@@ -27,6 +28,12 @@ export const productRoutes = async (app: FastifyInstance): Promise<void> => {
     "/",
     { schema: productListSchema },
     productController.findMany,
+  );
+
+  app.get<{ Params: ProductParams }>(
+    "/:id",
+    { schema: productGetSchema },
+    productController.findById,
   );
 
   app.post<{ Body: ProductInput }>(

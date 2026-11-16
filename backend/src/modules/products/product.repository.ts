@@ -70,6 +70,9 @@ export class ProductRepository {
   }
 
   public async delete(id: number): Promise<void> {
-    await prisma.product.delete({ where: { id } });
+    await prisma.$transaction([
+      prisma.cartItem.deleteMany({ where: { productId: id } }),
+      prisma.product.delete({ where: { id } }),
+    ]);
   }
 }
