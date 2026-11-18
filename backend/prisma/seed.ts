@@ -3,6 +3,13 @@ import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
+// Product images are hosted in the public Supabase Storage bucket.
+const STORAGE_BASE_URL =
+  process.env.SEED_IMAGES_BASE_URL ??
+  "https://iltlhvuocgebupanwzhg.supabase.co/storage/v1/object/public/product-images/products/seed";
+
+const productImage = (fileName: string): string => `${STORAGE_BASE_URL}/${fileName}`;
+
 const products = [
   {
     title: "Airline-Approved Pet Travel Carrier",
@@ -11,9 +18,9 @@ const products = [
     price: 54.99,
     rating: 4,
     images: [
-      "https://images.unsplash.com/photo-1764813824215-4afa03d1a011?fit=max&w=1080",
-      "https://images.unsplash.com/photo-1764813824215-4afa03d1a011?fit=max&w=1080",
-      "https://images.unsplash.com/photo-1764813824215-4afa03d1a011?fit=max&w=1080",
+      productImage("pet-travel-carrier-1.jpg"),
+      productImage("pet-travel-carrier-2.jpg"),
+      productImage("pet-travel-carrier-3.jpg"),
     ],
     stockQuantity: 20,
   },
@@ -24,9 +31,9 @@ const products = [
     price: 89.99,
     rating: 4.5,
     images: [
-      "https://images.unsplash.com/photo-1545249390-6bdfa286032f?fit=max&w=1080",
-      "https://images.unsplash.com/photo-1545249390-6bdfa286032f?fit=max&w=1080",
-      "https://images.unsplash.com/photo-1545249390-6bdfa286032f?fit=max&w=1080",
+      productImage("cat-scratching-post-1.jpg"),
+      productImage("cat-scratching-post-2.jpg"),
+      productImage("cat-scratching-post-3.jpg"),
     ],
     stockQuantity: 20,
   },
@@ -37,9 +44,9 @@ const products = [
     price: 15.99,
     rating: 5,
     images: [
-      "https://images.unsplash.com/photo-1758543535539-325abf59ef48?fit=max&w=1080",
-      "https://images.unsplash.com/photo-1758543535539-325abf59ef48?fit=max&w=1080",
-      "https://images.unsplash.com/photo-1758543535539-325abf59ef48?fit=max&w=1080",
+      productImage("rubber-chew-ball-1.jpg"),
+      productImage("rubber-chew-ball-2.jpg"),
+      productImage("rubber-chew-ball-3.jpg"),
     ],
     stockQuantity: 20,
   },
@@ -50,9 +57,9 @@ const products = [
     price: 49.99,
     rating: 3.5,
     images: [
-      "https://images.unsplash.com/photo-1713106872096-cee971f0528e?fit=max&w=1080",
-      "https://images.unsplash.com/photo-1713106872096-cee971f0528e?fit=max&w=1080",
-      "https://images.unsplash.com/photo-1713106872096-cee971f0528e?fit=max&w=1080",
+      productImage("memory-foam-pet-bed-1.jpg"),
+      productImage("memory-foam-pet-bed-2.jpg"),
+      productImage("memory-foam-pet-bed-3.jpg"),
     ],
     stockQuantity: 20,
   },
@@ -63,9 +70,9 @@ const products = [
     price: 24.99,
     rating: 5,
     images: [
-      "https://images.unsplash.com/photo-1598134493179-51332e56807f?fit=max&w=1080",
-      "https://images.unsplash.com/photo-1598134493179-51332e56807f?fit=max&w=1080",
-      "https://images.unsplash.com/photo-1598134493179-51332e56807f?fit=max&w=1080",
+      productImage("stainless-steel-dog-bowl-1.jpg"),
+      productImage("stainless-steel-dog-bowl-2.jpg"),
+      productImage("stainless-steel-dog-bowl-3.jpg"),
     ],
     stockQuantity: 20,
   },
@@ -76,9 +83,9 @@ const products = [
     price: 29.99,
     rating: 4,
     images: [
-      "https://images.unsplash.com/photo-1577447278822-37801be21738?fit=max&w=1080",
-      "https://images.unsplash.com/photo-1577447278822-37801be21738?fit=max&w=1080",
-      "https://images.unsplash.com/photo-1577447278822-37801be21738?fit=max&w=1080",
+      productImage("reflective-leash-collar-set-1.jpg"),
+      productImage("reflective-leash-collar-set-2.jpg"),
+      productImage("reflective-leash-collar-set-3.jpg"),
     ],
     stockQuantity: 20,
   },
