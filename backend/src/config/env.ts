@@ -14,7 +14,10 @@ export const env = {
   NODE_ENV: process.env.NODE_ENV ?? "development",
   HOST: process.env.HOST ?? "0.0.0.0",
   PORT: parsePort(process.env.PORT),
-  CORS_ORIGIN: process.env.CORS_ORIGIN ?? "http://localhost:3000",
+  CORS_ORIGIN: (process.env.CORS_ORIGIN ?? "http://localhost:3000")
+    .split(",")
+    .map((origin) => origin.trim().replace(/\/+$/, ""))
+    .filter(Boolean),
   REDIS_URL: process.env.REDIS_URL ?? "redis://localhost:6379",
   JWT_SECRET: process.env.JWT_SECRET ?? "",
   SUPABASE_URL: process.env.SUPABASE_URL ?? "",
