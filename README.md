@@ -1,15 +1,19 @@
 # PawsStore — интернет-магазин (Fastify + PostgreSQL + Redis)
 
-Серверная часть и REST API интернет-магазина (вариант 3: Fastify, PostgreSQL 15+, Prisma ORM, Redis, Supabase, Koyeb) и клиентское приложение на React.
+Серверная часть и REST API интернет-магазина (вариант 3: Fastify, PostgreSQL 15+, Prisma ORM, Redis, Supabase) и клиентское приложение на React.
+
+> Бэкенд развёрнут на **Render** (Docker) вместо Koyeb: Koyeb закрыл создание сервисов для новых аккаунтов после перехода в Mistral.
 
 ## Рабочий деплой
 
 | Компонент | Ссылка |
 |---|---|
-| Frontend (Vercel) | `https://<project>.vercel.app` |
-| Backend API (Koyeb) | `https://<service>.koyeb.app/api` |
-| Swagger / OpenAPI | `https://<service>.koyeb.app/docs` |
-| Health check | `https://<service>.koyeb.app/api/health` |
+| Frontend (Vercel) | https://frontend-tau-cyan-4rli098mto.vercel.app |
+| Backend API (Render) | https://pawsstore-api-pgjo.onrender.com/api |
+| Swagger / OpenAPI | https://pawsstore-api-pgjo.onrender.com/docs |
+| Health check | https://pawsstore-api-pgjo.onrender.com/api/health |
+
+Бесплатный инстанс Render засыпает при простое — первый запрос может занять до минуты.
 
 Тестовые пользователи (создаются сидом): `admin@example.com` / `Password123!` (admin), `customer@example.com` / `Password123!` (customer). Промокод — `SAVE10`.
 
@@ -19,7 +23,7 @@
 - **БД:** PostgreSQL (локально — контейнер, в облаке — Supabase)
 - **Кэш:** Redis (локально — контейнер, в облаке — Upstash Redis)
 - **Медиа:** Supabase Storage
-- **Хостинг:** Koyeb (Docker), фронтенд — Vercel
+- **Хостинг:** Render (Docker), фронтенд — Vercel
 
 ## Локальный запуск через Docker Compose
 
@@ -62,7 +66,7 @@
 | `SUPABASE_SERVICE_ROLE_KEY` | Service role ключ Supabase (только на сервере!) | `eyJ...` |
 | `SUPABASE_STORAGE_BUCKET` | Публичный bucket для изображений товаров | `product-images` |
 
-Фронтенд: `REACT_APP_API_URL` — публичный адрес бэкенда (например, `https://<service>.koyeb.app`).
+Фронтенд: `REACT_APP_API_URL` — публичный адрес бэкенда (например, `https://<service>.onrender.com`).
 
 ## Деплой в облако
 
@@ -81,18 +85,21 @@
 ### 2. Redis (Upstash)
 Создайте базу на [upstash.com](https://upstash.com) → скопируйте URL вида `rediss://default:<password>@<host>:6379` → `REDIS_URL`.
 
-### 3. Backend на Koyeb (Docker)
-1. **Create Web Service → GitHub**, репозиторий, ветка `main`.
-2. Builder: **Dockerfile**, *Work directory*: `backend`.
-3. Exposed port: `5000` (HTTP), health check: `HTTP /api/health`.
-4. Environment variables: `NODE_ENV=production`, `HOST=0.0.0.0`, `PORT=5000`, `DATABASE_URL`, `REDIS_URL`, `JWT_SECRET`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_STORAGE_BUCKET`, `CORS_ORIGIN=https://<project>.vercel.app`.
-5. После деплоя проверьте `https://<service>.koyeb.app/api/health` и `/docs`.
+### 3. Backend на Render (Docker)
+1. **New → Web Service → Public Git Repository**: `https://github.com/darolBiV/BACKEND`, ветка `main`.
+2. Language: **Docker**, *Root Directory*: `backend`, регион Frankfurt, план Free.
+3. *Advanced → Health Check Path*: `/api/health`.
+4. Environment variables (кнопка *Add from .env*): `NODE_ENV=production`, `HOST=0.0.0.0`, `PORT=5000`, `DATABASE_URL`, `REDIS_URL`, `JWT_SECRET`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_STORAGE_BUCKET`, `CORS_ORIGIN=http://localhost:3000,https://<project>.vercel.app`.
+5. После деплоя проверьте `https://<service>.onrender.com/api/health` и `/docs`.
 
 ### 4. Frontend на Vercel
-1. **Add New Project** → репозиторий, *Root Directory*: `frontend`, Framework: Create React App.
-2. Environment variable `REACT_APP_API_URL=https://<service>.koyeb.app`.
-3. Файл `frontend/vercel.json` перенаправляет все маршруты на `index.html` (react-router).
-4. После получения домена Vercel добавьте его в `CORS_ORIGIN` на Koyeb и сделайте Redeploy.
+Через Vercel CLI из каталога `frontend` (файл `frontend/vercel.json` перенаправляет все маршруты на `index.html` для react-router):
+```bash
+cd frontend
+npx vercel login
+npx vercel deploy --prod --yes --build-env REACT_APP_API_URL=https://<service>.onrender.com
+```
+После получения домена Vercel добавьте его в `CORS_ORIGIN` на Render (*Save, rebuild, and deploy*).
 
 ## Git Flow
 
